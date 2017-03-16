@@ -43,8 +43,6 @@ DECLARE_GLOBAL_DATA_PTR;
 
 static void dns323_init_pci( void );
 static void dns323_init_devices( void );
-static void dns323_remap_registers( void );
-static void dns323_disable_cpu_streaming( void );
 void orion5x_pci_hw_rd_conf(int bus, int dev, u32 func,	u32 where, u32 *val);
 void orion5x_pci_hw_wr_conf(int bus, int dev, u32 func,	u32 where, u32 val);
 
@@ -55,12 +53,9 @@ int board_init(void)
 	/* init serial */
 	gd->baudrate = CONFIG_BAUDRATE;
 	gd->have_console = 1;
-	//serial_init();
 
-	//dns323_init_devices();
-	//dns323_remap_registers();
+	dns323_init_devices();
 	dns323_init_pci();
-	//dns323_disable_cpu_streaming();
 
 	/* arch number of DNS323 */
 	gd->bd->bi_arch_number = MACH_TYPE_DNS323;
@@ -76,20 +71,6 @@ int board_init(void)
 
 	return 0;
 }
-#if 0
-int dram_init (void)
-{
-	gd->bd->bi_dram[0].start = 0x0;
-	gd->bd->bi_dram[0].size = 0x4000000; /* 64MB */
-
-	return 0;
-}
-
-int last_stage_init(void)
-{
-	return 0;
-}
-#endif
 
 static void dns323_init_pci( void )
 {
@@ -182,67 +163,14 @@ static void dns323_init_pci( void )
 	orion5x_pci_hw_wr_conf(bus, dev, 0, 0x64, pcix_status);
 }
 
-#if 0
 static void dns323_init_devices( void )
 {
-#if 0 /* Moved to lowlevel init */
-	/* MPP Config */
-	ORION5X_REG_WRITE(0x10000, 0x00000000);
-	ORION5X_REG_WRITE(0x10004, 0x00000000);
-	ORION5X_REG_WRITE(0x10050, 0x00001111);
-	/* Disable orange leds */
-	ORION5X_REG_WRITE(0x10100, 0x00000006);
-	/* GPIO Enable */
-	ORION5X_REG_WRITE(0x10104, 0x000006e1);
-	/* Enable blinking power led */
-	ORION5X_REG_WRITE(0x10108, 0x00000108);
-#endif
-
 	/* Setup CS Magic Bits */
 	ORION5X_REG_WRITE(0x1045c, 0x8fcfffff); /* Device CS0, SRAM */
 	ORION5X_REG_WRITE(0x10460, 0x8fefffff); /* Device CS1, Flash */
 	ORION5X_REG_WRITE(0x10464, 0x8fcfffff); /* Device CS2, UART */
 	ORION5X_REG_WRITE(0x1046c, 0x8fcfffff); /* Bootdev CS */
 }
-
-static void dns323_remap_registers( void )
-{
-	/* Remap Registers */
-	ORION5X_REG_WRITE(0x20004, PEX0_MEM_BASE);
-	ORION5X_REG_WRITE(0x20008, PEX0_MEM_REMAP);
-	ORION5X_REG_WRITE(0x20000, PEX0_MEM_SIZE);
-	ORION5X_REG_WRITE(0x20014, PCI0_MEM_BASE);
-	ORION5X_REG_WRITE(0x20018, PCI0_MEM_REMAP);
-	ORION5X_REG_WRITE(0x20010, PCI0_MEM_SIZE);
-
-	ORION5X_REG_WRITE(0x20024, PEX0_IO_BASE);
-	ORION5X_REG_WRITE(0x20020, PEX0_IO_SIZE);
-
-	ORION5X_REG_WRITE(0x20034, PCI0_IO_BASE);
-	ORION5X_REG_WRITE(0x20030, PCI0_IO_SIZE);
-
-	ORION5X_REG_WRITE(0x20054, DEVICE_CS0_BASE);
-	ORION5X_REG_WRITE(0x20050, DEVICE_CS0_SIZE);
-	
-	ORION5X_REG_WRITE(0x20064, DEVICE_CS1_BASE);
-	ORION5X_REG_WRITE(0x20060, DEVICE_CS1_SIZE);
-
-	ORION5X_REG_WRITE(0x20074, DEVICE_CS2_BASE);
-	ORION5X_REG_WRITE(0x20070, DEVICE_CS2_SIZE);
-
-	ORION5X_REG_WRITE(0x20044, BOOTDEV_CS_BASE);
-	ORION5X_REG_WRITE(0x20040, BOOTDEV_CS_SIZE);
-}
-
-static void dns323_disable_cpu_streaming( void )
-{
-	volatile unsigned int temp;
-
-	__asm__ __volatile__("mrc    p15, 0, %0, c1, c0, 0" : "=r" (temp):: "memory");
-	temp &= 0xefffffff;
-	__asm__ __volatile__("mcr    p15, 0, %0, c1, c0, 0" : "=r" (temp):: "memory");
-}
-#endif
 
 void orion5x_pci_hw_rd_conf(int bus, int dev, u32 func,
 					u32 where, u32 *val)
@@ -263,8 +191,6 @@ void orion5x_pci_hw_wr_conf(int bus, int dev, u32 func,
 
 	ORION5X_REG_WRITE(0x30c7c, val);
 }
-
-
 
 #if defined(CONFIG_CMD_NET) && defined(CONFIG_RESET_PHY_R)
 /* Configure and enable MV88E1116 PHY */
