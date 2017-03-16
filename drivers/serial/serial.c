@@ -31,7 +31,7 @@
 #include <asm/arch/kirkwood.h>
 #endif
 #ifdef CONFIG_ORION5X
-#include <asm/arch/orion5x.h>
+#include <asm/arch-orion5x/orion5x.h>
 #endif
 
 #if defined (CONFIG_SERIAL_MULTI)

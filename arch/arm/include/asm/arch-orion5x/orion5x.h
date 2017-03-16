@@ -36,7 +36,7 @@
 #endif /* __ASSEMBLY__ */
 
 #if defined(CONFIG_FEROCEON)
-#include <asm/arch/cpu.h>
+#include <asm/arch-orion5x/cpu.h>
 
 /* SOC specific definations */
 #define ORION5X_REGISTER(x)			(ORION5X_REGS_PHY_BASE + x)
@@ -68,7 +68,7 @@
 /* include here SoC variants. 5181, 5281, 6183 should go here when
    adding support for them, and this comment should then be updated. */
 #if defined(CONFIG_88F5182)
-#include <asm/arch/mv88f5182.h>
+#include <asm/arch-orion5x/mv88f5182.h>
 #else
 #error "SOC Name not defined"
 #endif

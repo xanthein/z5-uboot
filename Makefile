@@ -2037,6 +2037,9 @@ TNY_A9260_config	:	unconfig
 	@echo "#define CONFIG_$(@:_config=) 1" >$(obj)include/config.h
 	@$(MKCONFIG) -n $@ -a tny_a9260 arm arm926ejs tny_a9260 calao at91
 
+orion5x_dns323_config : unconfig
+	@$(MKCONFIG) -n $@ $(@:_config=) arm arm926ejs dns323 - orion5x
+
 ########################################################################
 ## ARM Integrator boards - see doc/README-integrator for more info.
 integratorap_config	\
