@@ -54,6 +54,7 @@
 #undef CONFIG_CMD_FPGA
 #define CONFIG_CMD_NET
 #undef CONFIG_CMD_NFS
+#undef CONFIG_CMD_IDE
 #undef CONFIG_CMD_SETGETDCR
 #undef CONFIG_CMD_XIMG
 #undef CONFIG_CMD_CACHE
@@ -67,7 +68,7 @@
 //#define CONFIG_SKIP_LOWLEVEL_INIT
 //#define CONFIG_SKIP_RELOCATE_UBOOT
 
-#define DEBUG
+//#define DEBUG
 #define CONFIG_SYS_HZ				1000
 #define CONFIG_SYS_TIMERBASE			0xf1020300
 
@@ -78,7 +79,7 @@
 #define ORION5X_MPP8_15				0x00000000
 #define ORION5X_MPP16_23			0x00000000
 
-/*
+/*-----------------------------------------------------------------------
  * Board-specific values for Orion5x GPIO low level init:
  */
 #define ORION5X_GPIO_OUT_ENABLE			0x00000126
@@ -99,7 +100,7 @@
 #define CONFIG_SYS_MAX_FLASH_SECT		(135)	/* max number of sectors on one chip */
 
 /* Not really sure where I should map this */
-#define CONFIG_ENV_ADDR 0xfff80000
+#define CONFIG_ENV_OFFSET 			0x4000
 #define CONFIG_ENV_IS_IN_FLASH			1	/* use flash for environment vars */
 #define CONFIG_ENV_SIZE				0x2000
 #define CONFIG_ENV_SECT_SIZE			0x2000
@@ -112,15 +113,6 @@
 #define CONFIG_SYS_FLASH_EMPTY_INFO
 //#define CONFIG_FLASH_CFI_LEGACY
 //#define CONFIG_SYS_FLASH_LEGACY_256Kx8 1
-
-#define CONFIG_SYS_CMD_NAND
-#define CONFIG_SYS_MAX_NAND_DEVICE     1
-#define SECTORSIZE 512
-#define NAND_NO_RB
-
-#define ADDR_COLUMN 1
-#define ADDR_PAGE 2
-#define ADDR_COLUMN_PAGE 3
 
 /*-----------------------------------------------------------------------
  * Network
@@ -140,6 +132,37 @@
 #define CONFIG_CMD_PING
 #define CONFIG_CMD_DHCP
 #endif
+
+/*-----------------------------------------------------------------------
+ * IDE
+ */
+#ifdef CONFIG_CMD_IDE
+#define __io
+#define CONFIG_IDE_PREINIT
+#define CONFIG_DOS_PARTITION
+#define CONFIG_CMD_EXT2
+/* ED Mini V has an IDE-compatible SATA connector for port 1 */
+#define CONFIG_MVSATA_IDE
+#define CONFIG_MVSATA_IDE_USE_PORT1
+/* Needs byte-swapping for ATA data register */
+#define CONFIG_IDE_SWAP_IO
+/* Data, registers and alternate blocks are at the same offset */
+#define CONFIG_SYS_ATA_DATA_OFFSET	(0x0100)
+#define CONFIG_SYS_ATA_REG_OFFSET	(0x0100)
+#define CONFIG_SYS_ATA_ALT_OFFSET	(0x0100)
+/* Each 8-bit ATA register is aligned to a 4-bytes address */
+#define CONFIG_SYS_ATA_STRIDE		4
+/* Controller supports 48-bits LBA addressing */
+#define CONFIG_LBA48
+/* A single bus, a single device */
+#define CONFIG_SYS_IDE_MAXBUS		1
+#define CONFIG_SYS_IDE_MAXDEVICE	1
+/* ATA registers base is at SATA controller base */
+#define CONFIG_SYS_ATA_BASE_ADDR	ORION5X_SATA_BASE
+/* ATA bus 0 is orion5x port 1 on ED Mini V2 */
+#define CONFIG_SYS_ATA_IDE0_OFFSET	ORION5X_SATA_PORT1_OFFSET
+/* end of IDE defines */
+#endif /* CMD_IDE */
 
 /*-----------------------------------------------------------------------
  * Size of malloc() pool
@@ -176,7 +199,7 @@
  * Miscellaneous configurable options
  */
 //#define	CONFIG_SYS_LONGHELP			/* undef to save memory		*/
-#define	CONFIG_SYS_PROMPT		"dns323 # "	/* Monitor Command Prompt	*/
+#define	CONFIG_SYS_PROMPT		"z5 # "	/* Monitor Command Prompt	*/
 #define	CONFIG_SYS_CBSIZE		256		/* Console I/O Buffer Size	*/
 #define	CONFIG_SYS_PBSIZE (CONFIG_SYS_CBSIZE+sizeof(CONFIG_SYS_PROMPT)+16) /* Print Buffer Size */
 #define	CONFIG_SYS_MAXARGS		16		/* max number of command args	*/
@@ -197,7 +220,7 @@
  * Ident
  ************************************************************/
 #define VERSION_TAG "unstable"
-#define CONFIG_IDENT_STRING " DNS323 " VERSION_TAG
+#define CONFIG_IDENT_STRING " Z5 " VERSION_TAG
 
 /*-----------------------------------------------------------------------
  * Stack sizes
@@ -219,5 +242,12 @@
 #define CONFIG_DISPLAY_CPUINFO		/* Display cpu info */
 
 #define CONFIG_SYS_RESET_ADDRESS	0xffff0000
+
+
+#define CONFIG_CMDLINE_EDITING
+#define CONFIG_COMMAND_HISTORY
+#define CONFIG_COMMAND_EDIT
+
+#undef BOARD_LATE_INIT
 
 #endif	/* __CONFIG_H */
