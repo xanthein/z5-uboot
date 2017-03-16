@@ -52,7 +52,7 @@
 #include <config_cmd_default.h>
 
 #undef CONFIG_CMD_FPGA
-#undef CONFIG_CMD_NET
+#define CONFIG_CMD_NET
 #undef CONFIG_CMD_NFS
 #undef CONFIG_CMD_SETGETDCR
 #undef CONFIG_CMD_XIMG
@@ -130,12 +130,15 @@
 #define CONFIG_MVGBE_PORTS	{1}		/* enable port 0 only */
 #define CONFIG_SKIP_LOCAL_MAC_RANDOMIZATION	/* don't randomize MAC */
 #define CONFIG_PHY_BASE_ADR	0x8
-#define CONFIG_RESET_PHY_R	/* use reset_phy() to init mv8831116 PHY */
 #define CONFIG_NETCONSOLE	/* include NetConsole support   */
 #define CONFIG_NET_MULTI	/* specify more that one ports available */
+#define CONFIG_RESET_PHY_R	/* use reset_phy() to init mv8831116 PHY */
 #define	CONFIG_MII		/* expose smi ove miiphy interface */
 #define CONFIG_SYS_FAULT_ECHO_LINK_DOWN	/* detect link using phy */
 #define CONFIG_ENV_OVERWRITE	/* ethaddr can be reprogrammed */
+
+#define CONFIG_CMD_PING
+#define CONFIG_CMD_DHCP
 #endif
 
 /*-----------------------------------------------------------------------
